@@ -5,13 +5,14 @@ import (
 	"machine"
 	"machine/usb"
 	"machine/usb/hid/keyboard"
+	"math"
 
 	_ "embed"
 )
 
 //go:embed password.txt
 var password []byte
-var isBtnPressed = false
+var btnPressDuration = 0
 
 func init() {
 	usb.Manufacturer = "Dobefu"
@@ -27,14 +28,14 @@ func main() {
 
 	for {
 		if !button.Get() {
-			if !isBtnPressed {
+			if btnPressDuration <= 0 {
 				_, _ = kb.Write(password[:len(password)-1])
-				isBtnPressed = true
 			}
 
+			btnPressDuration = 100
 			continue
 		}
 
-		isBtnPressed = false
+		btnPressDuration = int(math.Max(float64(btnPressDuration-1), 0))
 	}
 }
