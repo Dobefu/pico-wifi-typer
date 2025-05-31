@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
+	"machine"
 	"machine/usb"
 	"machine/usb/hid/keyboard"
-	"time"
 
 	_ "embed"
 )
 
 //go:embed password.txt
 var password []byte
+var isBtnPressed = false
 
 func init() {
 	usb.Manufacturer = "Dobefu"
@@ -20,7 +21,20 @@ func init() {
 
 func main() {
 	kb := keyboard.Port()
-	time.Sleep(time.Second * 2)
 
-	_, _ = kb.Write(password[:len(password)-1])
+	button := machine.GPIO23
+	button.Configure(machine.PinConfig{Mode: machine.PinInput})
+
+	for {
+		if !button.Get() {
+			if !isBtnPressed {
+				_, _ = kb.Write(password[:len(password)-1])
+				isBtnPressed = true
+			}
+
+			continue
+		}
+
+		isBtnPressed = false
+	}
 }
