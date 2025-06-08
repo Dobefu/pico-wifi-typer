@@ -12,7 +12,7 @@ import (
 
 //go:embed password.txt
 var password []byte
-var btnPressDuration = 0
+var btnPressDuration float64 = 0.0
 
 func init() {
 	usb.Manufacturer = "Dobefu"
@@ -36,6 +36,6 @@ func main() {
 			continue
 		}
 
-		btnPressDuration = int(math.Max(float64(btnPressDuration-1), 0))
+		btnPressDuration = math.Max(btnPressDuration-1, 0)
 	}
 }
