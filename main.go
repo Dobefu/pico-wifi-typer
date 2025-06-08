@@ -23,16 +23,16 @@ func init() {
 func main() {
 	kb := keyboard.Port()
 
-	button := machine.GPIO23
-	button.Configure(machine.PinConfig{Mode: machine.PinInput})
+	button := machine.GPIO7
+	button.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
 
 	for {
-		if !button.Get() {
+		if button.Get() {
 			if btnPressDuration <= 0 {
 				_, _ = kb.Write(password[:len(password)-1])
 			}
 
-			btnPressDuration = 100
+			btnPressDuration = 10000
 			continue
 		}
 
